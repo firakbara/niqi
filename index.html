@@ -223,7 +223,7 @@
 <body>
 
 	<!-- Custom Welcome Popup -->
-	<div id="welcomePopup" class="custom-popup-overlay active">
+	<div id="welcomePopup" class="custom-popup-overlay">
 		<div class="custom-popup">
 			<button class="custom-popup-close" id="closePopup">&times;</button>
 			<img src="images/KoPag.png" alt="Welcome">
@@ -546,19 +546,47 @@
 	<script src="js/custom.js"></script>
 
 	<script>
-		// Custom Popup Logic
+		// Custom Popup Logic (Egar-style)
 		const welcomePopup = document.getElementById('welcomePopup');
 		const closePopupBtn = document.getElementById('closePopup');
 		const exploreBtn = document.getElementById('exploreBtn');
 
+		// Show popup after 2 seconds (if not already closed in this session)
+		setTimeout(() => {
+			if (!sessionStorage.getItem('popupClosed')) {
+				welcomePopup.classList.add('active');
+				document.body.style.overflow = 'hidden';
+			}
+		}, 2000);
+
+		// Close popup function
 		function closePopup() {
 			welcomePopup.classList.remove('active');
+			document.body.style.overflow = '';
+			sessionStorage.setItem('popupClosed', 'true');
 		}
 
+		// Close button
 		closePopupBtn.addEventListener('click', closePopup);
+
+		// Explore button
 		exploreBtn.addEventListener('click', function () {
 			closePopup();
 			window.location.href = 'shop.html';
+		});
+
+		// Close popup when clicking outside
+		welcomePopup.addEventListener('click', (e) => {
+			if (e.target === welcomePopup) {
+				closePopup();
+			}
+		});
+
+		// Close with Escape key
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && welcomePopup.classList.contains('active')) {
+				closePopup();
+			}
 		});
 
 		// Handle Contact Form Submission (Index Page)
