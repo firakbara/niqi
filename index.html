@@ -468,6 +468,27 @@
 				}
 			});
 		});
+
+		// Auto-show Welcome Popup
+		document.addEventListener('DOMContentLoaded', function () {
+			Swal.fire({
+				title: 'Selamat Datang di NgoPag!',
+				text: 'Nikmati sensasi kopi terbaik untuk mengawali harimu.',
+				imageUrl: 'images/KoPag.png',
+				imageWidth: 400,
+				imageHeight: 200,
+				imageAlt: 'Welcome Image',
+				showCloseButton: true,
+				showConfirmButton: false,
+				allowOutsideClick: false,
+				allowEscapeKey: false,
+				backdrop: `
+					rgba(0,0,123,0.4)
+					left top
+					no-repeat
+				`
+			});
+		});
 	</script>
 </body>
 
