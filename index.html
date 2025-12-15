@@ -470,7 +470,7 @@
 		});
 
 		// Auto-show Welcome Popup
-		document.addEventListener('DOMContentLoaded', function () {
+		function showWelcomePopup() {
 			Swal.fire({
 				title: 'Selamat Datang di NgoPag!',
 				text: 'Nikmati sensasi kopi terbaik untuk mengawali harimu.',
@@ -482,13 +482,21 @@
 				showConfirmButton: false,
 				allowOutsideClick: false,
 				allowEscapeKey: false,
+				heightAuto: false, // Prevent partial scrolling jump
 				backdrop: `
 					rgba(0,0,123,0.4)
 					left top
 					no-repeat
 				`
 			});
-		});
+		}
+
+		// Run immediately if SweetAlert is loaded, otherwise wait for load
+		if (typeof Swal !== 'undefined') {
+			showWelcomePopup();
+		} else {
+			window.addEventListener('load', showWelcomePopup);
+		}
 	</script>
 </body>
 
