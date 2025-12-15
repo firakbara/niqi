@@ -121,10 +121,118 @@
 			transform: translateY(-3px);
 			box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 		}
+
+		/* Custom Popup Styles */
+		.custom-popup-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 50, 0.7);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 9999;
+			opacity: 0;
+			visibility: hidden;
+			transition: all 0.3s ease;
+		}
+
+		.custom-popup-overlay.active {
+			opacity: 1;
+			visibility: visible;
+		}
+
+		.custom-popup {
+			background: white;
+			border-radius: 15px;
+			padding: 30px;
+			max-width: 450px;
+			width: 90%;
+			text-align: center;
+			position: relative;
+			transform: scale(0.8);
+			transition: transform 0.3s ease;
+			box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+		}
+
+		.custom-popup-overlay.active .custom-popup {
+			transform: scale(1);
+		}
+
+		.custom-popup-close {
+			position: absolute;
+			top: 15px;
+			right: 15px;
+			background: #f0f0f0;
+			border: none;
+			width: 35px;
+			height: 35px;
+			border-radius: 50%;
+			font-size: 20px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: all 0.3s ease;
+			color: #333;
+		}
+
+		.custom-popup-close:hover {
+			background: #3b5d50;
+			color: white;
+		}
+
+		.custom-popup img {
+			max-width: 200px;
+			margin-bottom: 20px;
+			border-radius: 10px;
+		}
+
+		.custom-popup h2 {
+			color: #3b5d50;
+			margin-bottom: 15px;
+			font-size: 1.8rem;
+		}
+
+		.custom-popup p {
+			color: #666;
+			margin-bottom: 20px;
+			line-height: 1.6;
+		}
+
+		.custom-popup .popup-btn {
+			background: #3b5d50;
+			color: white;
+			border: none;
+			padding: 12px 30px;
+			border-radius: 25px;
+			font-size: 1rem;
+			cursor: pointer;
+			transition: all 0.3s ease;
+		}
+
+		.custom-popup .popup-btn:hover {
+			background: #2d4a3f;
+			transform: translateY(-2px);
+		}
 	</style>
 </head>
 
 <body>
+
+	<!-- Custom Welcome Popup -->
+	<div id="welcomePopup" class="custom-popup-overlay active">
+		<div class="custom-popup">
+			<button class="custom-popup-close" id="closePopup">&times;</button>
+			<img src="images/KoPag.png" alt="Welcome">
+			<h2>Selamat Datang di NgoPag!</h2>
+			<p>Nikmati sensasi kopi terbaik untuk mengawali harimu. Kami menyediakan kopi premium pilihan dari berbagai
+				daerah Indonesia.</p>
+			<button class="popup-btn" id="exploreBtn">Jelajahi Produk</button>
+		</div>
+	</div>
 
 	<!-- Start Header/Navigation -->
 	<nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
@@ -437,8 +545,22 @@
 	<script src="js/tiny-slider.js"></script>
 	<script src="js/custom.js"></script>
 
-	<script src="js/sweetalert2.min.js"></script>
 	<script>
+		// Custom Popup Logic
+		const welcomePopup = document.getElementById('welcomePopup');
+		const closePopupBtn = document.getElementById('closePopup');
+		const exploreBtn = document.getElementById('exploreBtn');
+
+		function closePopup() {
+			welcomePopup.classList.remove('active');
+		}
+
+		closePopupBtn.addEventListener('click', closePopup);
+		exploreBtn.addEventListener('click', function () {
+			closePopup();
+			window.location.href = 'shop.html';
+		});
+
 		// Handle Contact Form Submission (Index Page)
 		document.getElementById('contactFormIndex')?.addEventListener('submit', function (e) {
 			e.preventDefault();
@@ -447,56 +569,16 @@
 			const email = document.getElementById('emailIndex').value;
 			const message = document.getElementById('messageIndex').value;
 
-			// Show SweetAlert2 Popup
-			Swal.fire({
-				title: 'Terima Kasih!',
-				text: 'Pesan Anda siap dikirim. Kami akan mengarahkan Anda ke WhatsApp.',
-				icon: 'success',
-				confirmButtonText: 'Lanjut ke WhatsApp',
-				confirmButtonColor: '#3b5d50',
-				showCancelButton: true,
-				cancelButtonText: 'Batal',
-				cancelButtonColor: '#d33'
-			}).then((result) => {
-				if (result.isConfirmed) {
-					// Format WhatsApp Message
-					const waNumber = "6287829383526";
-					const text = `Halo NgoPag, perkenalkan saya ${name} (%0AEmail: ${email}).%0A%0APesan saya:%0A${message}`;
-					const waUrl = `https://wa.me/${waNumber}?text=${text}`;
+			// Format WhatsApp Message and redirect
+			const waNumber = "6287829383526";
+			const text = `Halo NgoPag, perkenalkan saya ${name} (Email: ${email}).%0A%0APesan saya:%0A${message}`;
+			const waUrl = `https://wa.me/${waNumber}?text=${text}`;
 
-					window.open(waUrl, '_blank');
-				}
-			});
+			// Show confirmation
+			if (confirm('Pesan Anda akan dikirim ke WhatsApp. Lanjutkan?')) {
+				window.open(waUrl, '_blank');
+			}
 		});
-
-		// Auto-show Welcome Popup
-		function showWelcomePopup() {
-			Swal.fire({
-				title: 'Selamat Datang di NgoPag!',
-				text: 'Nikmati sensasi kopi terbaik untuk mengawali harimu.',
-				imageUrl: 'images/KoPag.png',
-				imageWidth: 400,
-				imageHeight: 200,
-				imageAlt: 'Welcome Image',
-				showCloseButton: true,
-				showConfirmButton: false,
-				allowOutsideClick: false,
-				allowEscapeKey: false,
-				heightAuto: false, // Prevent partial scrolling jump
-				backdrop: `
-					rgba(0,0,123,0.4)
-					left top
-					no-repeat
-				`
-			});
-		}
-
-		// Run immediately if SweetAlert is loaded, otherwise wait for load
-		if (typeof Swal !== 'undefined') {
-			showWelcomePopup();
-		} else {
-			window.addEventListener('load', showWelcomePopup);
-		}
 	</script>
 </body>
 
